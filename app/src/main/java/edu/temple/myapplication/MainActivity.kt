@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 
@@ -58,5 +60,31 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.stopButton).setOnClickListener {
             timerBinder?.stop()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.options_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            // start button clicked
+            R.id.action_start -> {
+                timerBinder?.run {
+                    if (!isRunning) start(10)
+                    else if (isRunning) pause()
+                }
+            }
+            // stop button clicked
+            R.id.action_stop -> {
+                timerBinder?.stop()
+            }
+
+            // if not activity's menu item clicked,
+            else -> return false
+        }
+
+        return true
     }
 }
