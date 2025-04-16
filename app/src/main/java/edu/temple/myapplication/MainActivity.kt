@@ -12,8 +12,20 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileReader
+import java.io.BufferedReader
+import java.io.IOException
+
 
 class MainActivity : AppCompatActivity() {
+
+    // -------- CREATING FILE FOR STORAGE --------- //
+    // create a file to store the number
+    private val internalFilename = "my_file"
+    private lateinit var file: File
+    // -------- CREATING FILE FOR STORAGE --------- //
 
     // OUTSIDE OF ONCREATE -------
     lateinit var timerTextView : TextView
@@ -42,6 +54,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         timerTextView = findViewById(R.id.textView)
+
+        // -------- CREATING FILE FOR STORAGE --------- //
+        // create a file to store the number
+        file = File(filesDir, internalFilename)
+        // -------- CREATING FILE FOR STORAGE --------- //
+
+        // -------- LOAD SAVED TIMER --------- //
+        if (file.exists()) {
+            try {
+                val br = BufferedReader(FileReader(file))
+                val text = StringBuilder()
+                var line: String?
+                while (br.readLine().also { line = it } != null) {
+                    text.append(line)
+                    text.append('\n')
+                }
+                br.close()
+                timerTextView.setText(text.toString())
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        // -------- LOAD SAVED TIMER --------- //
 
         bindService(
             Intent(this, TimerService::class.java),
@@ -87,4 +122,38 @@ class MainActivity : AppCompatActivity() {
 
         return true
     }
+
+    // -------- SAVE FUNCTION --------- //
+    fun save() {
+        try {
+            val outputStream = FileOutputStream(file)
+            outputStream.write(timerTextView.text.toString().toByteArray())
+            outputStream.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    // -------- SAVE FUNCTION --------- //
+
+    // -------- SAVE WHEN EXITING APP --------- //
+    override fun onStop() {
+        super.onStop()
+
+        // delete file if timer is not paused
+        timerBinder?.run {
+            if (!paused) file.delete()
+            else save()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // delete file if timer is not paused
+        timerBinder?.run {
+            if (!paused) file.delete()
+            else save()
+        }
+    }
+    // -------- SAVE WHEN EXITING APP --------- //
 }
