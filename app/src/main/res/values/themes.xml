@@ -13,4 +13,19 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!-- START BUTTON STYLE -->
+    <style name="Theme.MyApplication.Start" parent="Widget.AppCompat.Button">
+        <!-- COLOR -->
+        <item name="android:textColor">@color/dark_grey</item>
+        <item name="backgroundTint">@color/green</item>
+    </style>
+
+    <!-- STOP BUTTON STYLE -->
+    <style name="Theme.MyApplication.Stop" parent="Widget.AppCompat.Button">
+        <!-- COLOR -->
+        <item name="android:textColor">@color/dark_grey</item>
+        <item name="backgroundTint">@color/red</item>
+    </style>
+
 </resources>
